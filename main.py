@@ -1,10 +1,11 @@
 import typing
 from dataclasses import dataclass
-
+import mongoengine as me
 from core import *
-from core.handlers.loader import handlers
 
 T = typing.TypeVar('T')
+
+me.connect('MergeAcademyBot')
 
 
 class Model:
@@ -24,10 +25,10 @@ def welcome():
     if not User.get():
         req.send_message('<b>👋 Привiт Макс Соболь, дякую за реєстрацію</b>')
 
-    msg = req.send_message('<b>Обери що тебе цікавить 👇</b>')
-    print(isinstance(msg, obj.Message))
+    req.send_message('<b>Обери що тебе цікавить 👇</b>')
 
 
-welcome.exclusive = False
-
-print(handlers)
+run(
+    parse_mode='html',
+)
+# fix parse_mode=None unsupported

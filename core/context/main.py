@@ -3,7 +3,7 @@ from __future__ import annotations
 from contextvars import ContextVar
 from dataclasses import dataclass
 
-# from ..base.documents import Storage
+from ..base.documents import Storage
 # from ..base.new_objects import CallbackButton
 from ..objects.tg_objects import Update, Message, CallbackQuery, Chat, User
 
@@ -54,7 +54,7 @@ class Context:
 
     @property
     def storage(self):
-        return Storage.get(ctx.chat_id, ctx.user_id)
+        return Storage.get(self.chat_id, self.user_id)
 
     @property
     def state(self) -> str | None:
@@ -80,14 +80,14 @@ class Context:
         storage.lang = value
         storage.save()
 
-    @property
-    def button(self) -> CallbackButton | None:
-        """CallbackQuery.button"""
-        try:
-            button_id = self.query_data
-            return CallbackButton.get_button(button_id)
-        except (KeyError, AttributeError):
-            return None
+    # @property
+    # def button(self) -> CallbackButton | None:
+    #     """CallbackQuery.button"""
+    #     try:
+    #         button_id = self.query_data
+    #         return CallbackButton.get_button(button_id)
+    #     except (KeyError, AttributeError):
+    #         return None
 
     @property
     def update(self) -> Update | None:

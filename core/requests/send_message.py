@@ -6,17 +6,6 @@ from ..methods import SendMessage
 from ..objects.tg_objects import MessageEntity, Message
 
 
-class Context:
-    chat_id = 724477101
-    parse_mode = 'html'
-    disable_web_page_preview = True
-    disable_notification = True
-    protect_content = False
-
-
-ctx = Context()
-
-
 def send_message(
         text: str | Translations,
         reply_markup: ReplyMarkupT = None,
