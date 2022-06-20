@@ -1,6 +1,9 @@
 import os
 import time
 import typing
+
+import mongoengine as me
+
 from ..context import ctx
 from ..handlers.loader import handlers
 import requests
@@ -11,7 +14,10 @@ from ..requests.get_updates import get_updates
 
 logger = logging.getLogger('bot')
 BOT_TOKEN = os.environ['BOT_TOKEN']
+DB_NAME = os.environ['DB_NAME']
 API_URL = 'https://api.telegram.org/bot{}/{}'
+
+me.connect(DB_NAME)
 
 
 def clear_params(params: dict) -> dict:
@@ -23,10 +29,12 @@ def request(method: type[TgMethod], params: dict, **alternatives) -> TgObject | 
 
     endpoint = API_URL.format(BOT_TOKEN, method.__name__)
 
-    new_params = clear_params(params)
+    new_params = params.copy()
 
     for key, value in alternatives.items():
         new_params[key] = alternatives[key] if params[key] is None else params[key]
+
+    new_params = clear_params(new_params)
 
     resp = requests.post(endpoint, json=new_params).json()
     if resp['ok']:
