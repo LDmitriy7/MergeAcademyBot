@@ -1,5 +1,5 @@
 from .base import Handler
-from .loader import handlers
+from .loader import HANDLERS
 from .. import filters
 
 
@@ -22,7 +22,7 @@ def command(
 
     def _(func):
         handler = Handler(func, _filters)
-        handlers.append(handler)
+        HANDLERS.append(handler)
         return handler
 
     return _

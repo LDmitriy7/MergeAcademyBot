@@ -1,6 +1,6 @@
 from .base import Handler
 
-handlers: list[Handler] = []
-pre_handlers: list[Handler] = []
-post_handlers: list[Handler] = []
-post_any_handlers: list[Handler] = []
+HANDLERS: list[Handler] = []
+PRE_HANDLERS: list[Handler] = []
+POST_HANDLERS: list[Handler] = []
+POST_ANY_HANDLERS: list[Handler] = []

@@ -1,16 +1,11 @@
+import logging
 import os
-import time
 import typing
 
 import mongoengine as me
-
-from ..context import ctx
-from ..handlers.loader import handlers
 import requests
-import logging
+
 from ..base.base import TgMethod, TgObject, prepare_value
-from ..objects.tg_objects import Update
-from ..requests.get_updates import get_updates
 from ..utils import listify
 
 logger = logging.getLogger('bot')
@@ -26,8 +21,6 @@ def clear_params(params: dict) -> dict:
 
 
 def request(method: type[TgMethod], params: dict, **alternatives) -> TgObject | typing.Any:
-    from .base import TgObject
-
     endpoint = API_URL.format(BOT_TOKEN, method.__name__)
 
     new_params = params.copy()
@@ -46,95 +39,3 @@ def request(method: type[TgMethod], params: dict, **alternatives) -> TgObject | 
     cast_types = listify(getattr(method.__response_type__, '__args__', method.__response_type__))
     result = prepare_value(result, cast_types)
     return result
-
-
-# ===
-
-def _check_handlers(update: Update):
-    for handler in handlers:
-        for _filter in handler.filters:
-            if not _filter():
-                break
-        else:
-            handler.func()
-
-
-def process_update(update: Update) -> None:
-    ctx.update = update
-
-    try:
-        _check_handlers(update)
-    # except exceptions.Cancel:
-    #     pass
-    except Exception as exc:
-        logger.exception(exc)
-
-    # ctx.update = None #TODO
-
-
-def _process_updates(updates: list[Update]):
-    for update in updates:
-        process_update(update)
-
-
-def _start_polling(poll_interval: float):
-    offset = None
-
-    while True:
-        try:
-            updates = get_updates(offset=offset)
-
-            if updates:
-                logger.info(updates)
-                _process_updates(updates)
-                offset = updates[-1].update_id + 1
-
-            time.sleep(poll_interval)
-        except Exception as exc:
-            logger.exception(exc)
-
-
-# def _import_all(package: str):
-#     dirname = package.replace('.', '/')
-#     for file in Path(dirname).glob('*.py'):
-#         if not file.stem.startswith('_'):
-#             import_module(f'.{file.stem}', package)
-#
-#
-# APP_MODULES = ['handlers', 'middlewares', 'tasks']
-#
-#
-# def _init_app():
-#     import app
-#
-#     if hasattr(app, 'init'):
-#         app.init()
-#     else:
-#         for m_name in APP_MODULES:
-#             module = import_module(f'app.{m_name}')
-#             if hasattr(module, 'setup'):
-#                 module.setup()
-#             else:
-#                 _import_all(f'app.{m_name}')
-#
-#
-def run(
-        parse_mode: str = None,
-        disable_web_page_preview: bool = None,
-        disable_notification: bool = None,
-        protect_content: bool = None,
-        poll_interval: float = 0.0,
-):
-    #     _init_app()
-
-    logger.info('Starting up...')
-
-    ctx.parse_mode = parse_mode
-    ctx.disable_web_page_preview = disable_web_page_preview
-    ctx.disable_notification = disable_notification
-    ctx.protect_content = protect_content
-
-    try:
-        _start_polling(poll_interval)
-    except KeyboardInterrupt:
-        logger.info('Shutting down...')
