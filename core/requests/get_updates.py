@@ -9,8 +9,7 @@ def get_updates(
         timeout: int = None,
         allowed_updates: list[str] = None,
 ) -> list[Update]:
-    updates = bot.request(
+    return bot.request(
         GetUpdates,
         locals(),
     )
-    return [Update.from_dict(u) for u in updates]  # TODO

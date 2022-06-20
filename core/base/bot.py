@@ -8,9 +8,10 @@ from ..context import ctx
 from ..handlers.loader import handlers
 import requests
 import logging
-from ..base.base import TgMethod, TgObject
+from ..base.base import TgMethod, TgObject, prepare_value
 from ..objects.tg_objects import Update
 from ..requests.get_updates import get_updates
+from ..utils import listify
 
 logger = logging.getLogger('bot')
 BOT_TOKEN = os.environ['BOT_TOKEN']
@@ -42,8 +43,8 @@ def request(method: type[TgMethod], params: dict, **alternatives) -> TgObject | 
     else:
         raise Exception(f'{resp["error_code"]=}, {resp["description"]=}')
 
-    if issubclass(method.__response_type__, TgObject):
-        return method.__response_type__.from_dict(result)
+    cast_types = listify(getattr(method.__response_type__, '__args__', method.__response_type__))
+    result = prepare_value(result, cast_types)
     return result
 
 
