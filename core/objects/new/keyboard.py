@@ -1,11 +1,10 @@
-from .base import NewObject
-
-
-class Translations(NewObject):
-    ...
+from ...base import NewObject
 
 
 class Keyboard(NewObject):
+    def add_row(self, *buttons):
+        ...
+
     def add_rows(self, *buttons):
         ...
 

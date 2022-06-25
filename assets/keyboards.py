@@ -1,4 +1,4 @@
-from core.base.new_objects import Keyboard
+from core.objects import Keyboard
 
 
 class Main(Keyboard):

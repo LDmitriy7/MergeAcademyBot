@@ -2,47 +2,64 @@ import typing
 
 import mongoengine as me
 
-from .base import BaseDocument, BaseModel
-from ..context import ctx
+from .base_document import BaseDocument
+from .base_model import BaseModel
+from ..utils import cast
 
-ModelT = typing.TypeVar('ModelT', bound='Model')
+ObjectT = typing.TypeVar('ObjectT', bound='MyObject')
 
 
-class CurrentObjects(BaseDocument):
+def get_model_name(obj: BaseModel | type[BaseModel]):
+    if isinstance(obj, BaseModel):
+        return obj.__class__.__name__
+    return obj.__name__
+
+
+class CurrentObject(BaseDocument):
     user_id: int = me.IntField()
     model: str = me.StringField()
     obj: dict = me.DictField()
 
     meta = {
-        'collection': 'CurrentObjects__',
+        'collection': 'CurrentObjects',
     }
 
 
-class ObjectsCollections(BaseDocument):
+class CollectionObject(BaseDocument):
     user_id: int = me.IntField()
     model: str = me.StringField()
     obj: dict = me.DictField()
 
     meta = {
-        'collection': 'ObjectsCollections__',
+        'collection': 'CollectionObjects',
     }
 
 
 class MyObject(BaseModel):
+    """ Base class for all project objects """
 
     @classmethod
-    def get(cls: type[ModelT]) -> ModelT | None:
-        _doc = CurrentObjects.get_doc(user_id=ctx.user_id, model=cls.__name__)
-        if _doc is None:
+    def get(cls: type[ObjectT]) -> ObjectT | None:
+        """ Get current object of current user from storage """
+        from ..context import ctx
+
+        doc = CurrentObject.get_doc(user_id=ctx.user_id, model=get_model_name(cls))
+
+        if doc is None:
             return None
         else:
-            _obj = cls.from_dict(_doc.obj)
-        return _obj
+            return cast(doc.obj, cls)
 
-    def save(self):
-        _doc = CurrentObjects.get_doc(user_id=ctx.user_id, model=self.__class__.__name__)
-        if _doc is None:
-            _doc = CurrentObjects(user_id=ctx.user_id, model=self.__class__.__name__)
-        _doc.obj = self.to_dict()
-        _doc.save()
+    def save(self: ObjectT) -> ObjectT:
+        """ Save object to storage as current for current user """
+        from ..context import ctx
+
+        doc = CurrentObject.get_doc(user_id=ctx.user_id, model=get_model_name(self))
+
+        if doc is None:
+            doc = CurrentObject(user_id=ctx.user_id, model=get_model_name(self))
+
+        doc.obj = cast(self, dict)
+        doc.save()
+
         return self

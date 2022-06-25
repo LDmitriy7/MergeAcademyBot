@@ -1,5 +1,5 @@
 from .base import Handler
-from .loader import HANDLERS
+from ..loader import HANDLERS
 from .. import filters
 
 

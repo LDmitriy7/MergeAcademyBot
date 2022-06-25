@@ -1,6 +1,6 @@
-from ..base import bot
-from ..methods import GetUpdates
-from ..objects.tg_objects import Update
+from ..api import request
+from ..objects import Update
+from ..objects.methods import GetUpdates
 
 
 def get_updates(
@@ -9,7 +9,7 @@ def get_updates(
         timeout: int = None,
         allowed_updates: list[str] = None,
 ) -> list[Update]:
-    return bot.request(
+    return request(
         GetUpdates,
         locals(),
     )

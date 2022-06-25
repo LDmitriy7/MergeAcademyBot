@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
+from .tg_objects import *
 from ..base import TgMethod
-from ..objects import *
 
 
 # ==> Section: https://core.telegram.org/bots/api#getting-updates

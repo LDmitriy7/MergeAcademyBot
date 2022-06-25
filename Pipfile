@@ -6,6 +6,10 @@ name = "pypi"
 [packages]
 mongoengine = "*"
 requests = "*"
+value = "*"
+key = "*"
+environs = "*"
+envparse = "*"
 
 [dev-packages]
 

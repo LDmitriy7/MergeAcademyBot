@@ -133,3 +133,10 @@ from .tg_objects import (
     CallbackGame,
     GameHighScore,
 )
+
+from .new import (
+    Translations,
+    Keyboard,
+    InlineKeyboard,
+    CallbackButton,
+)

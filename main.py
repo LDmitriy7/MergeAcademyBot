@@ -1,5 +1,9 @@
+import logging
+
 from assets import *
 from core import *
+
+logging.basicConfig(level=20)
 
 
 @on.command('start')
@@ -9,6 +13,11 @@ def welcome():
         my_objects.User().save()
 
     request.send_message('<b>Обери що тебе цікавить 👇</b>')
+
+
+@on.command('test')
+def test():
+    request.send_message('')
 
 
 @on.text(kb.Main.master_class)

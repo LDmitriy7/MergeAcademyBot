@@ -3,11 +3,27 @@ from __future__ import annotations
 from contextvars import ContextVar
 from dataclasses import dataclass
 
-from ..base.documents import Storage
-# from ..base.new_objects import CallbackButton
-from ..objects.tg_objects import Update, Message, CallbackQuery, Chat, User
+import mongoengine as me
+
+from ..base import BaseDocument
+from ..objects import Update, Message, CallbackQuery, Chat, User, CallbackButton
 
 UPDATE = ContextVar('UPDATE')
+
+
+class Storage(BaseDocument):
+    key: int = me.IntField()
+    state: str = me.StringField()
+    lang: str = me.StringField()
+    data: dict = me.DictField()
+
+    @classmethod
+    def get(cls, user_id: int) -> Storage:
+        return cls.get_doc(key=user_id) or Storage(key=user_id).save()
+
+    meta = {
+        'collection': 'Storage'
+    }
 
 
 class ContextDict:
@@ -54,7 +70,7 @@ class Context:
 
     @property
     def storage(self):
-        return Storage.get(self.chat_id, self.user_id)
+        return Storage.get(self.user_id)
 
     @property
     def state(self) -> str | None:
@@ -80,14 +96,14 @@ class Context:
         storage.lang = value
         storage.save()
 
-    # @property
-    # def button(self) -> CallbackButton | None:
-    #     """CallbackQuery.button"""
-    #     try:
-    #         button_id = self.query_data
-    #         return CallbackButton.get_button(button_id)
-    #     except (KeyError, AttributeError):
-    #         return None
+    @property
+    def button(self) -> CallbackButton | None:
+        """CallbackQuery.button"""
+        try:
+            button_id = self.query_data
+            return CallbackButton.get_button(button_id)
+        except (KeyError, AttributeError):
+            return None
 
     @property
     def update(self) -> Update | None:

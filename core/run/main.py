@@ -1,6 +1,5 @@
-from ..base.bot import logger
 from ..context import ctx
-from ..handlers.loader import HANDLERS
+from ..loader import HANDLERS, logger
 from ..objects.tg_objects import Update
 from ..requests.get_updates import get_updates
 
@@ -35,8 +34,8 @@ def start_polling():
 
             if updates:
                 logger.info(updates)
-                process_updates(updates)
                 offset = updates[-1].update_id + 1
+                process_updates(updates)
         except Exception as exc:
             logger.exception(exc)
 

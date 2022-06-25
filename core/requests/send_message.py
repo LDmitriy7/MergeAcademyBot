@@ -1,9 +1,8 @@
 from .base import ReplyMarkupT
-from ..base import bot
-from ..base.new_objects import Translations
+from ..api import request
 from ..context import ctx
-from ..methods import SendMessage
-from ..objects.tg_objects import MessageEntity, Message
+from ..objects import Translations, MessageEntity, Message
+from ..objects.methods import SendMessage
 
 
 def send_message(
@@ -20,7 +19,7 @@ def send_message(
         entities: list[MessageEntity] = None,
         allow_sending_without_reply: bool = None,
 ) -> Message:
-    return bot.request(
+    return request(
         SendMessage,
         locals(),
         chat_id=ctx.chat_id,
