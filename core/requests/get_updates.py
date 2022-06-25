@@ -1,6 +1,6 @@
 from ..api import request
 from ..objects import Update
-from ..objects.methods import GetUpdates
+from ..objects.tg_methods import GetUpdates
 
 
 def get_updates(

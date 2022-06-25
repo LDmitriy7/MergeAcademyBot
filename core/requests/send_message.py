@@ -2,7 +2,7 @@ from .base import ReplyMarkupT
 from ..api import request
 from ..context import ctx
 from ..objects import Translations, MessageEntity, Message
-from ..objects.methods import SendMessage
+from ..objects.tg_methods import SendMessage
 
 
 def send_message(

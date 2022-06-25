@@ -91,7 +91,7 @@ def _cast(value, to_type: type | list[type] | types.UnionType):
 
     if to_type == dict:
         if isinstance(value, BaseModel):
-            return asdict(value, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
+            return asdict(value)
         raise ValueError
 
     if isinstance(to_type, type):
