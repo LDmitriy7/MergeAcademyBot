@@ -1,0 +1,6 @@
+from core import Constants
+
+
+class C(Constants):
+    vacancies_amount = ...
+    edit_mode = ...

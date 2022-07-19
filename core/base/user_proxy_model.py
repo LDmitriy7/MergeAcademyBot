@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 import mongoengine as me
@@ -35,7 +37,19 @@ class CollectionObject(BaseDocument):
     }
 
 
-class MyObject(BaseModel):
+class UserProxy(typing.Generic[ObjectT]):
+
+    def __init__(self, obj: ObjectT):
+        self.obj = obj
+
+    def __enter__(self) -> ObjectT:
+        return self.obj
+
+    def __exit__(self, exc_type, exc_value, trace):
+        self.obj.save()
+
+
+class UserProxyModel(BaseModel):
     """ Base class for all project objects """
 
     @classmethod
@@ -50,6 +64,16 @@ class MyObject(BaseModel):
         else:
             return cast(doc.obj, cls)
 
+    @classmethod
+    def delete(cls: type[ObjectT]) -> None:
+        """ Delete current object of current user from storage """
+        from ..context import ctx
+
+        doc = CurrentObject.get_doc(user_id=ctx.user_id, model=get_model_name(cls))
+
+        if doc:
+            doc.delete()
+
     def save(self: ObjectT) -> ObjectT:
         """ Save object to storage as current for current user """
         from ..context import ctx
@@ -63,3 +87,12 @@ class MyObject(BaseModel):
         doc.save()
 
         return self
+
+    @classmethod
+    def proxy(cls: type[ObjectT]) -> UserProxy[ObjectT]:
+        """
+        (ContextManager)
+        On enter: return newly created or current object of current user from storage;
+        On exit: save object to storage as current for current user;
+        """
+        return UserProxy(cls.get() or cls())

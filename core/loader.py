@@ -16,6 +16,3 @@ mongoengine.connect(DB_NAME)
 session = requests.Session()
 
 HANDLERS: list[Handler] = []
-PRE_HANDLERS: list[Handler] = []
-POST_HANDLERS: list[Handler] = []
-POST_ANY_HANDLERS: list[Handler] = []

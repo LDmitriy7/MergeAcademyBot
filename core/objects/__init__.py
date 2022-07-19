@@ -139,4 +139,5 @@ from .new import (
     Keyboard,
     InlineKeyboard,
     CallbackButton,
+    UrlButton,
 )

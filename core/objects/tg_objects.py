@@ -451,7 +451,7 @@ class KeyboardButtonPollType(TgObject):
 class ReplyKeyboardRemove(TgObject):
     """ https://core.telegram.org/bots/api#replykeyboardremove """
 
-    remove_keyboard: bool
+    remove_keyboard: bool = True
     selective: bool = None
 
 

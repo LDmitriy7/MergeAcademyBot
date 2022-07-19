@@ -79,6 +79,8 @@ def cast_to_model(value: dict, to_type: type[BaseModel]):
 
 
 def cast_to_type(value, to_type: type):
+    if value is None:
+        return None
     if issubclass(to_type, BaseModel):
         if not isinstance(value, dict):
             raise ValueError

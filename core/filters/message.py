@@ -20,13 +20,14 @@ class Text(Filter):
 
     def __call__(self):
         try:
-            text = ctx.update.message.text
+            if not (text := ctx.update.message.text):
+                return False
         except AttributeError:
             return False
-        else:
-            if self.value is None:
-                return bool(text)
-            return text in listify(self.value)
+
+        if self.value is None:
+            return bool(text)
+        return text in listify(self.value)
 
 
 @dataclass
@@ -35,11 +36,39 @@ class Command(Filter):
 
     def __call__(self):
         try:
-            text = ctx.update.message.text
+            if not (text := ctx.update.message.text):
+                return False
         except AttributeError:
             return False
-        else:
-            if self.value is None:
-                return text.startswith('/')
 
-            return text.lstrip('/') in listify(self.value)
+        if self.value is None:
+            return text.startswith('/')
+
+        return text.lstrip('/') in listify(self.value)
+
+
+@dataclass
+class Contact(Filter):
+    def __call__(self):
+        try:
+            return bool(ctx.update.message.contact)
+        except AttributeError:
+            return False
+
+
+@dataclass
+class Document(Filter):
+    def __call__(self):
+        try:
+            return bool(ctx.update.message.document)
+        except AttributeError:
+            return False
+
+
+@dataclass
+class Photo(Filter):
+    def __call__(self):
+        try:
+            return bool(ctx.update.message.photo)
+        except AttributeError:
+            return False

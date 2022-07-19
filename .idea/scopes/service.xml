@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="service" pattern="file:.env||file:.gitignore||file:Pipfile" />
+</component>

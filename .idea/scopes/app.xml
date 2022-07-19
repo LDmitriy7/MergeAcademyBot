@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="app" pattern="file[horeca_v2]:app//*||file:__main__.py" />
+</component>
