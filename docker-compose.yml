@@ -3,6 +3,8 @@ services:
     build: .
     env_file: .env
     restart: always
+    environment:
+      DB_HOST: mongo
   mongo:
     image: mongo
     restart: always
