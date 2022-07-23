@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from ...base import NewObject
 from ..tg_objects import KeyboardButton, ReplyKeyboardMarkup
 from .translations import Translations
@@ -31,7 +33,12 @@ class Keyboard(NewObject):
             new_row = []
             for btn in row:
                 if isinstance(btn, (str, Translations)):
-                    btn = KeyboardButton(text=btn)
+                    btn = KeyboardButton(btn)
+                elif isinstance(btn, KeyboardButton):
+                    btn = deepcopy(btn)
+                else:
+                    raise ValueError('Invalid button')
+
                 if isinstance(btn.text, Translations):
                     btn.text = btn.text.get()
 
